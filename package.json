@@ -1,0 +1,45 @@
+{
+  "name": "storeit",
+  "version": "1.0.0",
+  "description": "Library for working with Storage.",
+  "main": "./lib/Storeit.js",
+  "homepage": "https://github.com/YuzuJS/storeit",
+  "author": {
+    "name": "YuzuJS"
+  },
+  "keywords": [
+    "storeit"
+  ],
+  "contributors": [
+    {
+      "name": "Donavon West",
+      "email": "email@donavon.com",
+      "url": "http://donavon.com"
+    }
+  ],
+  "license": {
+    "type": "MIT",
+    "url": "http://github.com/YuzuJS/storeit/raw/master/LICENSE"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/YuzuJS/storeit.git"
+  },
+  "readmeFilename": "README.md",
+  "scripts": {
+    "lint": "jshint ./lib",
+    "test": "mocha"
+  },
+  "dependencies": {
+    "pubit-as-promised": "~1.0.1",
+    "underscore": "~1.7.0"
+  },
+  "devDependencies": {
+    "jshint": ">= 0.7.1",
+    "coffee-script": ">= 1.3.3",
+    "mocha": ">= 1.1.0",
+    "chai": ">= 1.0.4",
+    "sinon": ">= 1.3.4",
+    "sinon-chai": ">= 2.1.0"
+  }
+}
