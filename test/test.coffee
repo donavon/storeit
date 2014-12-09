@@ -46,12 +46,14 @@ describe "StoreIt!", ->
             service.should.respondTo("set")
             service.should.respondTo("metadata")
             service.should.respondTo("delete")
+            service.should.respondTo("remove")
             service.should.respondTo("forEach")
             service.should.respondTo("clear")
             service.should.respondTo("load")
             service.should.respondTo("on")
             service.should.respondTo("off")
             service.should.respondTo("once")
+            service.delete.should.equal(service.remove)
 
         it "should have an options property with correct defaults", ->
             service.options.publish.should.equal(true)
