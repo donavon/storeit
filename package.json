@@ -1,6 +1,6 @@
 {
   "name": "storeit",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Library for working with Storage.",
   "main": "./lib/Storeit.js",
   "homepage": "https://github.com/YuzuJS/storeit",
