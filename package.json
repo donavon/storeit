@@ -1,6 +1,6 @@
 {
   "name": "storeit",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "A key/value storage system that publishes events.",
   "main": "./lib/Storeit.js",
   "homepage": "https://github.com/YuzuJS/storeit",
@@ -8,7 +8,14 @@
     "name": "YuzuJS"
   },
   "keywords": [
-    "storeit"
+    "storeit",
+    "webstorage",
+    "localstorage",
+    "sessionstorage",
+    "key",
+    "value",
+    "pair",
+    "kvp"
   ],
   "contributors": [
     {
