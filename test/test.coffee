@@ -1,8 +1,37 @@
 "use strict"
 
+StoreIt = require("..") # load StoreIt!
+StoreitError = StoreIt.StoreitError;
+
+describe "StoreIt.StoreitError", ->
+    describe "(before calling new)", ->
+        it "exists as a static property", ->
+            StoreitError.should.not.equal(undefined)
+        it "exposes the correct types", ->
+            StoreitError.should.have.property("loadUninitialized")
+            StoreitError.should.have.property("undefinedValue")
+            StoreitError.should.have.property("invalidNamespace")
+            StoreitError.should.have.property("nonexistentKey")
+            StoreitError.should.have.property("invalidKey")
+
+    describe "(after calling new)", ->
+        err = new StoreitError(StoreitError.invalidNamespace)
+
+        it "should be an instance of StoreitError", ->
+            (err instanceof StoreitError).should.equal(true)
+        it "should expose a `name` property", ->
+            err.should.have.property("name")
+            err.name.should.equal("StoreitError")
+        it "should expose a `type` property", ->
+            err.should.have.property("name")
+            err.type.should.equal("invalidNamespace")
+        it "should expose a `message` property", ->
+            err.should.have.property("message")
+            err.message.should.equal("namespace can not contain a hash character (#)")
+        it "should expose a `stack` property", ->
+            err.should.have.property("message")
 
 describe "StoreIt!", ->
-    StoreIt = require("..") # load StoreIt!
     service = null
 
     beforeEach ->
@@ -73,6 +102,12 @@ describe "StoreIt!", ->
             StoreIt.EventName["modified"].should.equal("modified")
             StoreIt.EventName["removed"].should.equal("removed")
             StoreIt.EventName["cleared"].should.equal("cleared")
+
+        it "should throw a StoreitError when calling remove", ->
+            (=>
+                service.remove("key")
+            ).should.throw(StoreitError)
+#            ).should.throw(new StoreitError(StoreitError.nonexistentKey))
 
         describe "when calling has", ->
 
@@ -386,7 +421,7 @@ describe "StoreIt!", ->
                 @keys.length.should.equal(0)
 
 
-    describe "with one items of pre-loaded data", ->
+    describe "with one item of pre-loaded data", ->
         beforeEach ->
             @publishAdded = sinon.stub()
             service = new StoreIt("loadns", @storageProvider)
@@ -412,6 +447,10 @@ describe "StoreIt!", ->
                 service.get("testkey5").should.equal("test")
             it "should publish an 'added' event for each item", ->
                 @publishAdded.should.be.calledWith("test", "testkey5")
+            it "should NOT throw a StoreitError when calling remove", ->
+                (=>
+                    service.remove("testkey5")
+                ).should.not.throw(StoreitError)
 
         describe "when calling set with options.publish = false", ->
             beforeEach ->
@@ -420,3 +459,24 @@ describe "StoreIt!", ->
 
             it "should be publish nothing", ->
                 @publishAdded.should.not.be.called
+
+    describe "without calling `load`", ->
+        beforeEach ->
+            service = new StoreIt("testns", @storageProvider)
+
+        it "should throw a StoreitError when calling has", ->
+            (=>
+                service.has("key")
+            ).should.throw(StoreitError)
+        it "should throw a StoreitError when calling get", ->
+            (=>
+                service.get("key")
+            ).should.throw(StoreitError)
+        it "should throw a StoreitError when calling set", ->
+            (=>
+                service.set("key", "value")
+            ).should.throw(StoreitError)
+        it "should throw a StoreitError when calling remove", ->
+            (=>
+                service.remove("key")
+            ).should.throw(StoreitError)
