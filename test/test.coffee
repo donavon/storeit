@@ -62,11 +62,17 @@ describe "StoreIt!", ->
             service.keys.should.be.an("array")
             service.keys.length.should.equal(0)
 
-        it "should have a static enum Action with correct value", ->
+        it "should have a static enum Action with correct values", ->
             StoreIt.Action["none"].should.equal(0)
             StoreIt.Action["added"].should.equal(1)
             StoreIt.Action["modified"].should.equal(2)
             StoreIt.Action["removed"].should.equal(3)
+
+        it "should have a static enum EventName with correct values", ->
+            StoreIt.EventName["added"].should.equal("added")
+            StoreIt.EventName["modified"].should.equal("modified")
+            StoreIt.EventName["removed"].should.equal("removed")
+            StoreIt.EventName["cleared"].should.equal("cleared")
 
         describe "when calling has", ->
 
