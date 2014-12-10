@@ -18,7 +18,7 @@ You can also see StoreIt in action, live, on the Interwebs! Check out this fiddl
 
 #### `Storeit` (constructor)
 
-**_ Storeit(namespace:string, storageProvider:Provider, logger?:Function):Storeit _**
+**Storeit(namespace:string, storageProvider:Provider, logger?:Function):Storeit**
 
 In order to use StoreIt, you must instantiate an instance. It takes two required and one optional parameter as follows:
 
@@ -85,14 +85,14 @@ Once you have a store object (calling `new Store` as discussed above), you can u
 
 #### `store.has`
 
-**_ store.has(key:string):Boolean _**
+**store.has(key:string):Boolean**
 
 Returns `true` if the key is found.
 
 
 #### `store.set`
 
-**_ store.set(key:string, value:Object):Result _**
+**store.set(key:string, value:Object):Result**
 
 This will add (if the key does not exist) or modify (if exists) an object in the store.
 
@@ -119,7 +119,7 @@ result = store.set("ID123", {bar:""});
 
 #### `store.get`
 
-**_ store.get(key:string, defaultValue?:Any):Any _**
+**store.get(key:string, defaultValue?:Any):Any**
 
 This will get an object in the store that matches `key`. If no key exists, the `defaultValue` is returned.
 If `defaultValue` is not specified, `undefined` is returned.
@@ -137,13 +137,13 @@ value = store.get("ID123", {foo: "bar"}); // value is an object {foo: "bar"}
 
 #### `store.getAll`
 
-**_ store.getAll():Any[] _**
+**store.getAll():Any[]**
 
 Returns an array of all objects in the store.
 
 #### `store.getAllFilteredByProperty`
 
-**_ store.getAllFilteredByProperty(propName:string, propValue:Any):Any[] _**
+**store.getAllFilteredByProperty(propName:string, propValue:Any):Any[]**
 
 Returns an array of all objects in the store filters by property. StoreIt will use the propName as the key and if it matches propValue, the value wil be included in the array.
 
@@ -159,7 +159,7 @@ var items = store.getAllFilteredByProperty("color", "red");
 
 #### `store.remove`
 
-**_ store.remove(key:string):Result _**
+**store.remove(key:string):Result**
 
 Removes a key from the store. If they key is not found, a "key doesn't exist" exception is thrown.
 If the removal was successful, `Result.value` will contain the removed value.
@@ -168,13 +168,13 @@ If the removal was successful, `Result.value` will contain the removed value.
 
 #### `store.delete`
 
-**_ store.delete(key:string):Result _**
+**store.delete(key:string):Result**
 
 This is an ES5 friendly version of `store.remove`. Use only if your application will be running only on modern browser.
 
 #### `store.forEach`
 
-**_ store.forEach(callback:Function< key:string, value:Any >):Void _**
+**store.forEach(callback:Function< key:string, value:Any >):Void**
 
 Storeit will call `callback` once for each item in the store.
 
@@ -187,7 +187,7 @@ store.forEach(function (key, value) {
 
 #### `store.clear`
 
-**_ store.clear():Void _**
+**store.clear():Void**
 
 Deletes all keys from the store.
 
@@ -195,7 +195,7 @@ Deletes all keys from the store.
 
 #### `store.load`
 
-**_ store.load():Void _**
+**store.load():Void**
 
 Loads all keys from the store's data store. You MUST call `load` before using the store object.
 
@@ -203,7 +203,7 @@ Loads all keys from the store's data store. You MUST call `load` before using th
 
 #### `store.on`
 
-**_ store.on(eventName:EventName, callback:Function< value:Any, key:string >):Void _**
+**store.on(eventName:EventName, callback:Function< value:Any, key:string >):Void**
 
 Listens for published events.
 
@@ -220,13 +220,13 @@ store.on(EventName.modified, onModified); // onModified will be called whenever 
 
 #### `store.once`
 
-**_ store.once(eventName:EventName, callback:Function< value:Any, key:string >):Void _**
+**store.once(eventName:EventName, callback:Function< value:Any, key:string >):Void**
 
 Same as `store.on` but automatically removes the listener after the first event.
 
 #### `store.off`
 
-**_ store.off(eventName:EventName, callback:Function):Void _**
+**store.off(eventName:EventName, callback:Function):Void**
 
 Stops listening to published events.
 
@@ -239,19 +239,19 @@ store.off(EventName.modified, onModified);
 
 #### `store.keys`
 
-**_ store.keys:string[] _**
+**store.keys:string[]**
 
 An array representing every key in the store.
 
 #### `store.namespace`
 
-**_ store.namespace:string _**
+**store.namespace:string**
 
 The namespace that you passed to the constructor.
 
 #### `store.options`
 
-**_ store.options:Options _**
+**store.options:Options**
 
 Where `Options` has the following properties:
 
