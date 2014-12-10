@@ -1,7 +1,7 @@
 {
   "name": "storeit",
-  "version": "1.0.2",
-  "description": "Library for working with Storage.",
+  "version": "1.0.3",
+  "description": "A client side key/value storage system that publishes events.",
   "main": "./lib/Storeit.js",
   "homepage": "https://github.com/YuzuJS/storeit",
   "author": {
