@@ -1,7 +1,7 @@
 Storeit!  [![Build Status](https://travis-ci.org/YuzuJS/storeit.svg)](https://travis-ci.org/YuzuJS/storeit)
 =======
 
-Storeit is client side key/value storage system that publishes events. You can have multiple "stores". It supports different storage "providers" (ex: WebStorage) by means on dependency injection.
+Storeit is a key/value storage system that publishes events. You can have multiple "stores". It supports different storage "providers" (ex: WebStorage) by means on dependency injection.
 
 ### Get the package
 ```
@@ -94,13 +94,15 @@ Returns `true` if the key is found.
 
 **store.set(key:string, value:Object):Result**
 
-This will add (if the key does not exist) or modify (if exists) an object in the store.
+This will add (if the key does not exist) or modify (if it exists) an object in the store.
 
 Where:
 
 * **key:string** - The unique key that you wish to set.
 * **value:Any** - The value that you wish to set. `value` may be an object, array, number, or a string.
 You may pass a "partial" object that will "extend" into any existing object.
+
+To tell if the operation added a new key, or modified an existing key, you can look at the `action` property of the returned `Result` object.
 
 Example (assuming key does not exist):
 ```javascript
@@ -115,7 +117,7 @@ result = store.set("ID123", {bar:""});
 // result.value is {foo:"", bar:""}
 ```
 
-**Note:** This will also publish either an `added` or a `modified` event.
+**Note:** This will also publish either an `EventName.added` or a `EventName.modified` event.
 
 #### `store.get`
 
