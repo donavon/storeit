@@ -27,7 +27,7 @@ describe "StoreIt.StoreitError", ->
             err.type.should.equal("invalidNamespace")
         it "should expose a `message` property", ->
             err.should.have.property("message")
-            err.message.should.equal("namespace can not contain a hash character (#)")
+            err.message.should.equal("namespace can not contain a hash character (#).")
         it "should expose a `stack` property", ->
             err.should.have.property("message")
 
