@@ -18,14 +18,12 @@ You can also see StoreIt in action, live, on the Interwebs! Check out this fiddl
 
 #### `Storeit` (constructor)
 
-**Storeit(namespace:string, storageProvider:Provider, logger?:Function):Storeit**
+**Storeit(namespace:string, storageProvider:Provider):Storeit**
 
 In order to use StoreIt, you must instantiate an instance. It takes two required and one optional parameter as follows:
 
 * **namespace**:string - the namespace for your store. Example: "album" or "grocery".
 * **storageProvider**:Provider - Any of the storeit-provider-xxx providers. Currently the only provider is WebStorage.
-* **logger**:Function -   A function that StoreIt will call to send information to the console.
-If you do not pass a function, no logging will take place.
 
 Example:
 ````javascript
@@ -46,7 +44,7 @@ var providerOptions = {
 var sessionStorageProvider = new StoreitProvider(providerOptions);
 
 // Create a store.
-var groceryStore = new Storeit("grocery", sessionStorageProvider, console.log.bind(console));
+var groceryStore = new Storeit("grocery", sessionStorageProvider);
 ````
 
 #### `Storeit.EventName`
