@@ -464,6 +464,9 @@ describe "StoreIt!", ->
         beforeEach ->
             service = new StoreIt("testns", @storageProvider)
 
+        it "should have `isInitialized` set to false", ->
+            service.isInitialized.should.equal(false)
+
         it "should throw a StoreitError when calling has", ->
             (=>
                 service.has("key")
@@ -480,3 +483,13 @@ describe "StoreIt!", ->
             (=>
                 service.remove("key")
             ).should.throw(StoreitError)
+
+        describe "then once we call load()", ->
+            it "should have `isInitialized` set to true", ->
+                service.load()
+                service.isInitialized.should.equal(true)
+
+        describe "then once we call clear()", ->
+            it "should have `isInitialized` set to true", ->
+                service.clear()
+                service.isInitialized.should.equal(true)
