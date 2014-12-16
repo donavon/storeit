@@ -203,7 +203,7 @@ Loads all keys from the store's data store. You MUST call `load` before using th
 
 #### `store.on`
 
-**store.on(eventName:EventName, callback:Function< value:Any, key:string >):Void**
+**store.on(eventName:EventName, callback:Function< value:Any, key:string >):Function**
 
 Listens for published events.
 
@@ -217,12 +217,23 @@ function onModified(value, key) {
 
 store.on(EventName.modified, onModified); // onModified will be called whenever any value in the store is modified.
 ```
+The function returned by `on` is an unsubscribe function.
+
+Example:
+````javascript
+var unsubscribe = store.on(EventName.modified, onModified);
+
+// The following two lines are equivalent.
+unsubscribe();
+store.off(EventName.modified, onModified);
+````
 
 #### `store.once`
 
-**store.once(eventName:EventName, callback:Function< value:Any, key:string >):Void**
+**store.once(eventName:EventName, callback:Function< value:Any, key:string >):Function**
 
 Same as `store.on` but automatically removes the listener after the first event.
+Just like in `on` above, the function returned by `on` is an unsubscribe function.
 
 #### `store.off`
 
@@ -235,7 +246,26 @@ Example:
 store.off(EventName.modified, onModified);
 ```
 
+#### `store.onMatch`
+
+**store.onMatch(pattern:string|RegExp, callback:Function< eventName:string, value:Any, key:string >):Function**
+
+Listens for multiple events. The pattern may be either a wildcard string or a Regular Expression.
+
+Example:
+````javascript
+store.onMatch("*", function (eventName, value, key) {
+    console.log("event=%s, key=%s, value=", eventName, key, value);
+});
+````
+
 ### `store` Properties
+
+#### `store.isInitialized`
+
+**store.isInitialized:Boolean**
+
+Set to `true` if you have called `store.load` or `store.clear`, otherwise `false`.
 
 #### `store.keys`
 
