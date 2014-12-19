@@ -125,7 +125,7 @@ describe "StoreIt!", ->
                 @value = {foo: "foo"}
                 service.set("testkey1", @value)
                 @return = service.get("testkey1", "fun hater")
-                @return.should.equal(@value)
+                @return.should.deep.equal(@value)
             it "on an invalid key... should return default value", ->
                 @return = service.get("testkeyINVALID", "fun hater")
                 @return.should.equal("fun hater")
@@ -359,7 +359,7 @@ describe "StoreIt!", ->
                 @result.should.have.property("key")
                 @result.key.should.equal("testkey1")
                 @result.should.have.property("value")
-                @result.value.should.equal(@value)
+                @result.value.should.deep.equal(@value)
                 @result.should.have.property("action")
                 @result.action.should.equal(StoreIt.Action.removed)
 
