@@ -39,6 +39,7 @@
   },
   "dependencies": {
     "pubit-as-promised": "~1.1.1",
+    "q": "0.8.12 - 1",
     "underscore": "~1.7.0"
   },
   "devDependencies": {
