@@ -1,4 +1,4 @@
-Storeit!  [![Build Status](https://travis-ci.org/YuzuJS/storeit.svg)](https://travis-ci.org/YuzuJS/storeit)
+Storeit!  [![Build Status](https://travis-ci.org/YuzuJS/storeit.svg?branch=master)](https://travis-ci.org/YuzuJS/storeit)
 =======
 
 Storeit is a key/value storage system that publishes events. You can have multiple "stores". It supports different storage "providers" (ex: WebStorage) by means on dependency injection.
@@ -54,6 +54,7 @@ Storeit.EventName is an enum containing the following actions:
 * added
 * modified
 * removed
+* cleared
 
 #### `Storeit.Action`
 
@@ -135,28 +136,6 @@ value = store.get("ID123"); // value is undefined
 value = store.get("ID123", {foo: "bar"}); // value is an object {foo: "bar"}
 ```
 
-#### `store.getAll`
-
-**store.getAll():Any[]**
-
-Returns an array of all objects in the store.
-
-#### `store.getAllFilteredByProperty`
-
-**store.getAllFilteredByProperty(propName:string, propValue:Any):Any[]**
-
-Returns an array of all objects in the store filters by property. StoreIt will use the propName as the key and if it matches propValue, the value wil be included in the array.
-
-Example:
-```javascript
-store.set("ID1", {id:"ID1", size:"large", color:"red"});
-store.set("ID2", {id:"ID2", size:"small", color:"white"});
-store.set("ID3", {id:"ID3", size:"large", color:"blue"});
-store.set("ID4", {id:"ID4", size:"large", color:"red"});
-var items = store.getAllFilteredByProperty("color", "red");
-// [{id:"ID1", size:"large", color:"red"}, {id:"ID4", size:"large", color:"red"}]
-```
-
 #### `store.remove`
 
 **store.remove(key:string):Result**
@@ -170,20 +149,24 @@ If the removal was successful, `Result.value` will contain the removed value.
 
 **store.delete(key:string):Result**
 
-This is an ES5 friendly version of `store.remove`. Use only if your application will be running only on modern browser.
+This is an ES5 friendly version of `store.remove`. Use only if your application will be running only on modern browsers.
 
 #### `store.forEach`
 
-**store.forEach(callback:Function< key:string, value:Any >):Void**
+**store.forEach(callback:Function< value:Any, key:string, store:Storeit >):Void**
 
 Storeit will call `callback` once for each item in the store.
 
 Example:
 ```javascript
-store.forEach(function (key, value) {
+store.forEach(function (value, key, store) {
     console.log('key="%s", value="%s"', key, value);
 });
 ```
+
+**Note:** The parameter order in the callback represents a breaking change from versions prior to 1.1.0.
+This was made to be in line with ES6.
+See [here](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/forEach) for more information.
 
 #### `store.clear`
 
