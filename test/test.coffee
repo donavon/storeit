@@ -379,18 +379,14 @@ describe "StoreIt!", ->
                 @forEach = sinon.stub()
                 service.forEach @forEach
 
-            it "should call the callback once for each item", ->
+            it "should call the callback with arguments (value, key, obj)", ->
                 spyCall = @forEach.getCall(0)
-                spyCall.args[0].should.equal("testkey1")
-                spyCall.args[1].should.equal(1)
+                spyCall.args[0].should.equal(1)
+                spyCall.args[1].should.equal("testkey1")
+                spyCall.args[2].should.equal(service)
 
-                spyCall = @forEach.getCall(1)
-                spyCall.args[0].should.equal("testkey2")
-                spyCall.args[1].should.equal(2)
-
-                spyCall = @forEach.getCall(2)
-                spyCall.args[0].should.equal("testkey3")
-                spyCall.args[1].should.equal(3)
+            it "should call the callback once for each item", ->
+                @forEach.should.have.been.calledThrice
 
         describe "when calling clear", ->
             beforeEach ->
