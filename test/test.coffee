@@ -133,6 +133,7 @@ describe "StoreIt!", ->
         describe "when calling set", ->
             beforeEach ->
                 @value = {foo: "foo"}
+                @value2 = {foo: "bar"}
                 @publishAdded = sinon.stub()
                 service.on("added", @publishAdded)
 
@@ -140,14 +141,14 @@ describe "StoreIt!", ->
                 service.on("modified", @publishModified)
 
                 @result = service.set("testkey1", @value)
-                @result2 = service.set("testkey1", "other")
-                @result3 = service.set("testkey1", "other")
+                @result2 = service.set("testkey1", @value2)
+                @result3 = service.set("testkey1", @value2)
 
             afterEach ->
                 service.off("added", @publishAdded)
                 service.off("modified", @publishModified)
 
-            it "should call storageProvider.setItem with the object", ->
+            it "hold call storageProvider.setItem with the object", ->
                 @storageProvider.setItem.should.be.calledWith("testns:testkey1", @value)
             it "should publish a 'added' event", ->
                 @publishAdded.should.have.been.called
@@ -157,6 +158,12 @@ describe "StoreIt!", ->
                 spyCall.args[0].should.not.equal(@value)
             it "should publish a 'modified' event (if key exists)", ->
                 @publishModified.should.have.been.called
+            it "should publish a 'modified' event (if key exists) with the proper arguments", ->
+                spyCall = @publishModified.getCall(0)
+                JSON.stringify(spyCall.args[0]).should.equal(JSON.stringify(@value2))
+                spyCall.args[1].should.equal("testkey1")
+                JSON.stringify(spyCall.args[2]).should.equal(JSON.stringify(@value))
+                spyCall.args[0].should.not.equal(@value)
             it "should NOT publish (if key exists and value is unchanged)", ->
                 @publishModified.should.have.been.calledOnce
 
