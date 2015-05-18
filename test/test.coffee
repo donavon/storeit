@@ -397,10 +397,15 @@ describe "StoreIt!", ->
 
         describe "when calling clear", ->
             beforeEach ->
+                @publishReady = sinon.stub()
+                service.on("ready", @publishReady)
                 service.set("testkey1", 1)
                 service.set("testkey2", 2)
                 service.set("testkey3", 3)
                 service.clear()
+
+            afterEach ->
+                service.off("ready", @publishReady)
 
             it "should call storageProvider.getItem for the index", ->
                 spyCall = @getMetadata.getCall(0)
@@ -422,6 +427,9 @@ describe "StoreIt!", ->
             it "should result in an empty array for keys", ->
                 @keys = service.keys
                 @keys.length.should.equal(0)
+
+            it "should NOT publish a 'ready' event", ->
+                @publishReady.should.not.have.been.called
 
 
     describe "with one item of pre-loaded data", ->
@@ -488,11 +496,29 @@ describe "StoreIt!", ->
             ).should.throw(StoreitError)
 
         describe "then once we call load()", ->
-            it "should have `isInitialized` set to true", ->
+            beforeEach ->
+                @publishReady = sinon.stub()
+                service.on("ready", @publishReady)
                 service.load()
+
+            afterEach ->
+                service.off("ready", @publishReady)
+
+            it "should have `isInitialized` set to true", ->
                 service.isInitialized.should.equal(true)
+            it "should publish a 'ready' event", ->
+                @publishReady.should.have.been.called
 
         describe "then once we call clear()", ->
-            it "should have `isInitialized` set to true", ->
+            beforeEach ->
+                @publishReady = sinon.stub()
+                service.on("ready", @publishReady)
                 service.clear()
+
+            afterEach ->
+                service.off("ready", @publishReady)
+
+            it "should have `isInitialized` set to true", ->
                 service.isInitialized.should.equal(true)
+            it "should publish a 'ready' event", ->
+                @publishReady.should.have.been.called
