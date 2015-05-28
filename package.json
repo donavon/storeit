@@ -1,6 +1,6 @@
 {
   "name": "storeit",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "A key/value storage system that publishes events.",
   "main": "./lib/Storeit.js",
   "homepage": "https://github.com/YuzuJS/storeit",
@@ -22,6 +22,11 @@
       "name": "Donavon West",
       "email": "email@donavon.com",
       "url": "http://donavon.com"
+    },
+    {
+      "name": "Paul Bouzakis",
+      "email": "coding@paulbouzakis.com",
+      "url": "http://paulbouzakis.com"
     }
   ],
   "license": {
@@ -39,7 +44,7 @@
   },
   "dependencies": {
     "pubit-as-promised": "~1.1.1",
-    "q": "0.8.12 - 1",
+    "q": "~1.2.1",
     "underscore": "~1.7.0"
   },
   "devDependencies": {
