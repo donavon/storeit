@@ -269,33 +269,42 @@ describe "StoreIt!", ->
                     service.get("testkey1").should.equal(@value)
 
         describe "when calling set with a partial object", ->
-            beforeEach ->
-                service.set("testkey1", {foo: "foo"})
-                @result = service.set("testkey1", {bar: "bar"})
+            describe "which contains a new property", ->
+                beforeEach ->
+                    service.set("testkey1", {foo: "foo"})
+                    @result = service.set("testkey1", {bar: "bar"})
 
-            it "should return the entire object in results.value", ->
-                @result.value.should.eql({foo: "foo", bar: "bar"})
+                it "should return the entire object in results.value", ->
+                    @result.value.should.eql({foo: "foo", bar: "bar"})
 
-            it "should write the serializer name to storageProvider", ->
-                spyCall = @storageProvider.setMetadata.getCall(0)
-                spyCall.args[0].should.equal("testns")
-                JSON.stringify(spyCall.args[1]).should.equal(JSON.stringify({itemSerializer:null}))
+                it "should write the serializer name to storageProvider", ->
+                    spyCall = @storageProvider.setMetadata.getCall(0)
+                    spyCall.args[0].should.equal("testns")
+                    JSON.stringify(spyCall.args[1]).should.equal(JSON.stringify({itemSerializer:null}))
 
-            it "should write the index to storageProvider", ->
-                # @storageProvider.setItem.should.be.calledWith("testns:testkey1", JSON.stringify({foo: "foo", bar: "bar"}))
-                spyCall = @storageProvider.setMetadata.getCall(1)
-                spyCall.args[0].should.equal("testns#index:primary")
-                JSON.stringify(spyCall.args[1]).should.equal(JSON.stringify(["testkey1"]))
+                it "should write the index to storageProvider", ->
+                    # @storageProvider.setItem.should.be.calledWith("testns:testkey1", JSON.stringify({foo: "foo", bar: "bar"}))
+                    spyCall = @storageProvider.setMetadata.getCall(1)
+                    spyCall.args[0].should.equal("testns#index:primary")
+                    JSON.stringify(spyCall.args[1]).should.equal(JSON.stringify(["testkey1"]))
 
-            it "should write the first object to storageProvider", ->
-                spyCall = @storageProvider.setItem.getCall(0)
-                spyCall.args[0].should.equal("testns:testkey1")
-                JSON.stringify(spyCall.args[1]).should.equal(JSON.stringify({foo: "foo"}))
+                it "should write the first object to storageProvider", ->
+                    spyCall = @storageProvider.setItem.getCall(0)
+                    spyCall.args[0].should.equal("testns:testkey1")
+                    JSON.stringify(spyCall.args[1]).should.equal(JSON.stringify({foo: "foo"}))
 
-            it "should write the entire extended object to storageProvider", ->
-                spyCall = @storageProvider.setItem.getCall(1)
-                spyCall.args[0].should.equal("testns:testkey1")
-                JSON.stringify(spyCall.args[1]).should.equal(JSON.stringify({foo: "foo", bar: "bar"}))
+                it "should write the entire extended object to storageProvider", ->
+                    spyCall = @storageProvider.setItem.getCall(1)
+                    spyCall.args[0].should.equal("testns:testkey1")
+                    JSON.stringify(spyCall.args[1]).should.equal(JSON.stringify({foo: "foo", bar: "bar"}))
+
+            describe "which resets an existing property's value from an object to a primitive", ->
+                beforeEach ->
+                    service.set("testkey1", {foo: {name: "foo"}})
+                    @result = service.set("testkey1", {foo: "foo"})
+
+                it "should return the entire object in results.value", ->
+                    @result.value.should.eql({foo: "foo"})
 
         describe "when accessing metadata", ->
 
