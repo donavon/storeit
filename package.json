@@ -1,6 +1,6 @@
 {
   "name": "storeit",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "A key/value storage system that publishes events.",
   "main": "./lib/Storeit.js",
   "homepage": "https://github.com/YuzuJS/storeit",
