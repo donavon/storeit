@@ -109,6 +109,18 @@ describe "StoreIt!", ->
             ).should.throw(StoreitError)
 #            ).should.throw(new StoreitError(StoreitError.nonexistentKey))
 
+        describe "calling set then modify the stored object", ->
+            beforeEach ->
+                @value = {foo: "foo"}
+                service.set("key1", @value)
+
+                @value.moo = "New property added"
+                @retrievedValue = service.get("key1")
+
+            it "should not modify the stored object", ->
+                @retrievedValue.should.not.have.property("moo")
+
+
         describe "when calling has", ->
 
             it "on a valid key... should return true", ->
