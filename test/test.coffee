@@ -1,5 +1,6 @@
 "use strict"
 
+_ = require("underscore")
 StoreIt = require("..") # load StoreIt!
 StoreitError = StoreIt.StoreitError;
 
@@ -33,6 +34,64 @@ describe "StoreIt.StoreitError", ->
 
 describe "StoreIt!", ->
     service = null
+
+    testSet = (key, value, value2, setArgs, pk) ->
+        beforeEach ->
+            @value = value
+            @value2 = value2
+            @publishAdded = sinon.stub()
+            service.on("added", @publishAdded)
+
+            @publishModified = sinon.stub()
+            service.on("modified", @publishModified)
+
+            if (pk && pk != "id")
+                service.options = {primaryKey: pk}
+            @result = service.set.apply(null, setArgs[0])
+            @result2 = service.set.apply(null, setArgs[1])
+            @result3 = service.set.apply(null, setArgs[2])
+
+        afterEach ->
+            service.off("added", @publishAdded)
+            service.off("modified", @publishModified)
+
+        it "shold call storageProvider.setItem with the object", ->
+            @storageProvider.setItem.should.be.calledWith("testns:" + key, @value)
+        it "should publish a 'added' event", ->
+            @publishAdded.should.have.been.called
+        it "...with a CLONE of value", ->
+            spyCall = @publishAdded.getCall(0)
+            JSON.stringify(spyCall.args[0]).should.equal(JSON.stringify(@value))
+            spyCall.args[0].should.not.equal(@value)
+        it "should publish a 'modified' event (if key exists)", ->
+            @publishModified.should.have.been.called
+        it "should publish a 'modified' event (if key exists) with the proper arguments", ->
+            spyCall = @publishModified.getCall(0)
+            publishedValue = @value2
+            if (pk)
+                publishedValue = _.omit(publishedValue, pk)
+            console.log(spyCall.args[0], publishedValue, pk)
+            JSON.stringify(spyCall.args[0]).should.equal(JSON.stringify(publishedValue))
+            spyCall.args[1].should.equal(key)
+            publishedValue = @value
+            if (pk)
+                publishedValue = _.omit(publishedValue, pk)
+            JSON.stringify(spyCall.args[2]).should.equal(JSON.stringify(publishedValue))
+            spyCall.args[0].should.not.equal(@value)
+        it "should NOT publish (if key exists and value is unchanged)", ->
+            @publishModified.should.have.been.calledOnce
+        it "should return a proper result object", ->
+            @result.should.have.property("key")
+            @result.key.should.equal(key)
+            @result.should.have.property("value")
+            @result.value.should.equal(@value)
+            @result.should.have.property("action")
+            @result.action.should.equal(StoreIt.Action.added)
+            @result2.action.should.equal(StoreIt.Action.modified)
+            @result3.action.should.equal(StoreIt.Action.none)
+        it "should result in the correct value for keys", ->
+            service.keys.length.should.equal(1)
+            service.keys[0].should.equal(key)
 
     beforeEach ->
         @storageProvider = {
@@ -142,56 +201,26 @@ describe "StoreIt!", ->
                 @return = service.get("testkeyINVALID", "fun hater")
                 @return.should.equal("fun hater")
 
-        describe "when calling set", ->
-            beforeEach ->
-                @value = {foo: "foo"}
-                @value2 = {foo: "bar"}
-                @publishAdded = sinon.stub()
-                service.on("added", @publishAdded)
+        describe "when calling set with a key and value", ->
+            key = "testkey1"
+            value = {foo: "foo1"}
+            value2 = {foo: "bar1"}
+            setArgs = [[key, value], [key, value2], [key, value2]]
+            testSet(key, value, value2, setArgs)
 
-                @publishModified = sinon.stub()
-                service.on("modified", @publishModified)
+        describe "when calling set with only a value (PK default of 'id')", ->
+            key = "testkey1"
+            value = {id: key, foo: "foo2"}
+            value2 = {id: key, foo: "bar2"}
+            setArgs = [[value], [value2], [value2]]
+            testSet(key, value, value2, setArgs, "id")
 
-                @result = service.set("testkey1", @value)
-                @result2 = service.set("testkey1", @value2)
-                @result3 = service.set("testkey1", @value2)
-
-            afterEach ->
-                service.off("added", @publishAdded)
-                service.off("modified", @publishModified)
-
-            it "hold call storageProvider.setItem with the object", ->
-                @storageProvider.setItem.should.be.calledWith("testns:testkey1", @value)
-            it "should publish a 'added' event", ->
-                @publishAdded.should.have.been.called
-            it "...with a CLONE of value", ->
-                spyCall = @publishAdded.getCall(0)
-                JSON.stringify(spyCall.args[0]).should.equal(JSON.stringify(@value))
-                spyCall.args[0].should.not.equal(@value)
-            it "should publish a 'modified' event (if key exists)", ->
-                @publishModified.should.have.been.called
-            it "should publish a 'modified' event (if key exists) with the proper arguments", ->
-                spyCall = @publishModified.getCall(0)
-                JSON.stringify(spyCall.args[0]).should.equal(JSON.stringify(@value2))
-                spyCall.args[1].should.equal("testkey1")
-                JSON.stringify(spyCall.args[2]).should.equal(JSON.stringify(@value))
-                spyCall.args[0].should.not.equal(@value)
-            it "should NOT publish (if key exists and value is unchanged)", ->
-                @publishModified.should.have.been.calledOnce
-
-            it "should return a proper result object", ->
-                @result.should.have.property("key")
-                @result.key.should.equal("testkey1")
-                @result.should.have.property("value")
-                @result.value.should.equal(@value)
-                @result.should.have.property("action")
-                @result.action.should.equal(StoreIt.Action.added)
-                @result2.action.should.equal(StoreIt.Action.modified)
-                @result3.action.should.equal(StoreIt.Action.none)
-
-            it "should result in the correct value for keys", ->
-                service.keys.length.should.equal(1)
-                service.keys[0].should.equal("testkey1")
+        describe "when calling set with only a value (PK of 'dw')", ->
+            key = "testkey1"
+            value = {dw: key, foo: "foo2"}
+            value2 = {dw: key, foo: "bar2"}
+            setArgs = [[value], [value2], [value2]]
+            testSet(key, value, value2, setArgs, "dw")
 
         describe "when calling set on a key that exists (object)", ->
             beforeEach ->
