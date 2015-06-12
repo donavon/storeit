@@ -309,6 +309,22 @@ describe "StoreIt!", ->
                     service.set("testkey1", @value)
                     service.get("testkey1").should.equal(@value)
 
+        describe "modifying the object that was stored without setting it to the store again", ->
+            beforeEach ->
+                @value = {"location":{"path":"3!@0.01951123900822323:0.028598665395614873"},"id":"62","text":"J"}
+                @value2 = {"location":{"path":"modified@path"}}
+
+                service.set("testbug", @value) # Add
+                service.set("testbug", @value2) # Modify
+
+            it "should not affect the value in the store", ->
+                valueInStore = service.get("testbug")
+                valueInStore.location.path.should.equal("modified@path")
+
+                delete @value2.location.path
+                valueInStore = service.get("testbug")
+                valueInStore.location.should.have.property("path")
+
         describe "when calling set with a partial object", ->
             describe "which contains a new property", ->
                 beforeEach ->
