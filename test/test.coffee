@@ -1,8 +1,10 @@
 "use strict"
 
 _ = require("underscore")
+Q = require("q")
+
 StoreIt = require("..") # load StoreIt!
-StoreitError = StoreIt.StoreitError;
+StoreitError = StoreIt.StoreitError
 
 describe "StoreIt.StoreitError", ->
     describe "(before calling new)", ->
@@ -36,7 +38,7 @@ describe "StoreIt!", ->
     service = null
 
     testSet = (key, value, value2, setArgs, pk) ->
-        beforeEach ->
+        beforeEach (done) ->
             @value = value
             @value2 = value2
             @publishAdded = sinon.stub()
@@ -50,6 +52,12 @@ describe "StoreIt!", ->
             @result = service.set.apply(null, setArgs[0])
             @result2 = service.set.apply(null, setArgs[1])
             @result3 = service.set.apply(null, setArgs[2])
+
+            @result.promise.then(
+                () => @result2.promise.then(
+                    () => @result3.promise.then(done, done)
+                )
+            )
 
         afterEach ->
             service.off("added", @publishAdded)
@@ -70,7 +78,6 @@ describe "StoreIt!", ->
             publishedValue = @value2
             if (pk)
                 publishedValue = _.omit(publishedValue, pk)
-            console.log(spyCall.args[0], publishedValue, pk)
             JSON.stringify(spyCall.args[0]).should.equal(JSON.stringify(publishedValue))
             spyCall.args[1].should.equal(key)
             publishedValue = @value
@@ -99,21 +106,22 @@ describe "StoreIt!", ->
             metadataSerializer: "TestMetadataSerializer"
             itemSerializer: "TestItemSerializer"
         }
-        @getItem = sinon.stub()
-        @getItem.withArgs("testns:testkey1").returns("test")
-        @getItem.withArgs("testns:testkey2").returns(null)
-        @getItem.withArgs("testns:testkey5").returns("test")
-        @getItem.withArgs("loadns:testkey5").returns("test")
+        @getItem = sinon.stub().returns(Q.resolve())
+        @getItem.withArgs("testns:testkey1").returns(Q.resolve("test"))
+        @getItem.withArgs("testns:testkey2").returns(Q.resolve(null))
+        @getItem.withArgs("testns:testkey5").returns(Q.resolve("test"))
+        @getItem.withArgs("loadns:testkey5").returns(Q.resolve("test"))
 
-        @setItem = sinon.stub()
-        @removeItem = sinon.stub()
+        @setItem = sinon.stub().returns(Q.resolve())
+        @removeItem = sinon.stub().returns(Q.resolve())
 
-        @setMetadata = sinon.stub()
-        @getMetadata = sinon.stub()
-        @getMetadata.withArgs("testns").returns(null)
-        @getMetadata.withArgs("testns#index:primary").returns([])
-        @getMetadata.withArgs("loadns").returns(null)
-        @getMetadata.withArgs("loadns#index:primary").returns(["testkey5"])
+        @setMetadata = sinon.stub().returns(Q.resolve())
+        @setMetadata.withArgs("testns").returns(Q.resolve())
+        @getMetadata = sinon.stub().returns(Q.resolve())
+        @getMetadata.withArgs("testns").returns(Q.resolve(null))
+        @getMetadata.withArgs("testns#index:primary").returns(Q.resolve([]))
+        @getMetadata.withArgs("loadns").returns(Q.resolve(null))
+        @getMetadata.withArgs("loadns#index:primary").returns(Q.resolve(["testkey5"]))
 
         @storageProvider.getMetadata = @getMetadata
         @storageProvider.setMetadata = @setMetadata
@@ -124,9 +132,10 @@ describe "StoreIt!", ->
 
 
     describe "with no pre-loaded data", ->
-        beforeEach ->
+        beforeEach (done) ->
             service = new StoreIt("testns", @storageProvider)
-            service.load()
+            @promise = service.load()
+            @promise.then(done, done)
 
         it "implements the correct interface", ->
             service.should.respondTo("has")
@@ -327,9 +336,12 @@ describe "StoreIt!", ->
 
         describe "when calling set with a partial object", ->
             describe "which contains a new property", ->
-                beforeEach ->
-                    service.set("testkey1", {foo: "foo"})
-                    @result = service.set("testkey1", {bar: "bar"})
+                beforeEach (done) ->
+                    @result1 = service.set("testkey1", {foo: "foo"})
+                    @result1.promise.then(() =>
+                        @result = service.set("testkey1", {bar: "bar"})
+                        @result.promise.then(done, done)
+                    )
 
                 it "should return the entire object in results.value", ->
                     @result.value.should.eql({foo: "foo", bar: "bar"})
@@ -356,9 +368,10 @@ describe "StoreIt!", ->
                     JSON.stringify(spyCall.args[1]).should.equal(JSON.stringify({foo: "foo", bar: "bar"}))
 
             describe "which resets an existing property's value from an object to a primitive", ->
-                beforeEach ->
+                beforeEach (done) ->
                     service.set("testkey1", {foo: {name: "foo"}})
                     @result = service.set("testkey1", {foo: "foo"})
+                    @result.promise.then(done, done)
 
                 it "should return the entire object in results.value", ->
                     @result.value.should.eql({foo: "foo"})
@@ -370,9 +383,10 @@ describe "StoreIt!", ->
                     (-> service.metadata("testkey1002")).should.throw(Error)
 
             describe "on a valid key", ->
-                beforeEach ->
-                    service.set("testkey1", "foo")
+                beforeEach (done) ->
+                    @result = service.set("testkey1", "foo")
                     @metadata = service.metadata("testkey1")
+                    @result.promise.then(done, done)
 
                 it "should return a proper object", ->
                     @metadata.should.have.property("get")
@@ -395,10 +409,11 @@ describe "StoreIt!", ->
                             @metadata.get().should.equal(@value)
 
             describe "using the shorthand `set` syntax", ->
-                beforeEach ->
+                beforeEach (done) ->
                     @key = "testkey1"
                     @value = "bar"
                     @results = service.set(@key, "foo", @value)
+                    @results.promise.then(done, done)
 
                 describe "the returned results.metadata", ->
                     it "should return the same value", ->
@@ -409,13 +424,16 @@ describe "StoreIt!", ->
                         service.metadata(@key).get().should.equal(@value)
 
         describe "when calling delete", ->
-            beforeEach ->
+            beforeEach (done) ->
                 @value = {foo: "foo"}
                 @publishRemoved = sinon.stub()
                 service.on("removed", @publishRemoved)
 
-                service.set("testkey1", @value)
-                @result = service.delete("testkey1")
+                @result1 = service.set("testkey1", @value)
+                @result1.promise.then(() =>
+                    @result = service.delete("testkey1")
+                    @result.promise.then(done, done)
+                )
 
             afterEach ->
                 service.off("removed", @publishRemoved)
@@ -445,10 +463,17 @@ describe "StoreIt!", ->
                 @forEach.should.not.be.called
 
         describe "when calling forEach (with three items set)", ->
-            beforeEach ->
-                service.set("testkey1", 1)
-                service.set("testkey2", 2)
-                service.set("testkey3", 3)
+            beforeEach (done) ->
+                @result1 = service.set("testkey1", 1)
+                @result2 = service.set("testkey2", 2)
+                @result3 = service.set("testkey3", 3)
+
+                @result1.promise.then(
+                    () => @result2.promise.then(
+                        () => @result3.promise.then(done, done)
+                    )
+                )
+
                 @forEach = sinon.stub()
                 service.forEach @forEach
 
@@ -462,13 +487,20 @@ describe "StoreIt!", ->
                 @forEach.should.have.been.calledThrice
 
         describe "when calling clear", ->
-            beforeEach ->
+            beforeEach (done) ->
                 @publishReady = sinon.stub()
                 service.on("ready", @publishReady)
-                service.set("testkey1", 1)
-                service.set("testkey2", 2)
-                service.set("testkey3", 3)
-                service.clear()
+                @result1 = service.set("testkey1", 1)
+                @result2 = service.set("testkey2", 2)
+                @result3 = service.set("testkey3", 3)
+                @result1.promise.then(
+                    () => @result2.promise.then(
+                        () => @result3.promise.then(
+                            () =>
+                                service.clear().then(done, done)
+                            )
+                    )
+                )
 
             afterEach ->
                 service.off("ready", @publishReady)
@@ -508,8 +540,9 @@ describe "StoreIt!", ->
             service.off("added", @publishAdded)
 
         describe "when calling load", ->
-            beforeEach ->
-                service.load()
+            beforeEach (done) ->
+                service.load().then(done, done)
+
             it "should have a keys property with correct defaults", ->
                 service.keys.should.be.an("array")
                 service.keys.length.should.equal(1)
@@ -530,9 +563,10 @@ describe "StoreIt!", ->
                 ).should.not.throw(StoreitError)
 
         describe "when calling set with options.publish = false", ->
-            beforeEach ->
+            beforeEach (done) ->
                 service.options = {publish:false}
-                service.load()
+                @promise = service.load()
+                @promise.then(done, done)
 
             it "should be publish nothing", ->
                 @publishAdded.should.not.be.called
@@ -562,10 +596,11 @@ describe "StoreIt!", ->
             ).should.throw(StoreitError)
 
         describe "then once we call load()", ->
-            beforeEach ->
+            beforeEach (done) ->
                 @publishReady = sinon.stub()
                 service.on("ready", @publishReady)
-                service.load()
+                @promise = service.load()
+                @promise.then(done, done)
 
             afterEach ->
                 service.off("ready", @publishReady)
