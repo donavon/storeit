@@ -43,9 +43,9 @@
     "test": "mocha"
   },
   "dependencies": {
-    "pubit-as-promised": "~1.1.1",
-    "q": "~1.2.1",
-    "underscore": "~1.7.0"
+    "pubit-as-promised": "^1.1.1",
+    "q": "^1.2.1",
+    "underscore": "^1.7.0"
   },
   "devDependencies": {
     "jshint": ">= 0.7.1",
