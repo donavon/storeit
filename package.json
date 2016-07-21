@@ -1,11 +1,11 @@
 {
   "name": "storeit",
-  "version": "2.3.1",
+  "version": "2.4.0",
   "description": "A key/value storage system that publishes events.",
   "main": "./lib/Storeit.js",
-  "homepage": "https://github.com/YuzuJS/storeit",
+  "homepage": "https://github.com/donavon/storeit",
   "author": {
-    "name": "YuzuJS"
+    "name": "donavon"
   },
   "keywords": [
     "storeit",
@@ -31,11 +31,11 @@
   ],
   "license": {
     "type": "MIT",
-    "url": "http://github.com/YuzuJS/storeit/raw/master/LICENSE"
+    "url": "http://github.com/donavon/storeit/raw/master/LICENSE"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/YuzuJS/storeit.git"
+    "url": "git://github.com/donavon/storeit.git"
   },
   "readmeFilename": "README.md",
   "scripts": {
@@ -43,9 +43,9 @@
     "test": "mocha"
   },
   "dependencies": {
-    "pubit-as-promised": "~1.1.1",
-    "q": "~1.2.1",
-    "underscore": "~1.7.0"
+    "pubit-as-promised": "^1.1.1",
+    "q": "^1.2.1",
+    "underscore": "^1.7.0"
   },
   "devDependencies": {
     "jshint": ">= 0.7.1",
