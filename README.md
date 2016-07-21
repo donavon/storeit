@@ -1,6 +1,6 @@
 Storeit!
 ==========
-[![Build Status](https://travis-ci.org/YuzuJS/storeit.svg?branch=master)](https://travis-ci.org/YuzuJS/storeit)
+[![Build Status](https://travis-ci.org/donavon/storeit.svg?branch=master)](https://travis-ci.org/donavon/storeit)
 
 Storeit is a key/value storage system that publishes events. You can have multiple "stores".
 It supports different injected storage "providers" (ex: WebStorage).
@@ -18,12 +18,12 @@ You can also see StoreIt in action, live, on the Interwebs! Check out this fiddl
 ## API
 
 You can view the entire API spec
-[here](https://github.com/YuzuJS/storeit/wiki/API-Documentation).
+[here](https://github.com/donavon/storeit/wiki/API-Documentation).
 
 ## Plugins
 
 Storeit now support third part plugins! Yay! Check out how to write a plugin
-[here](https://github.com/YuzuJS/storeit/wiki/Plugins).
+[here](https://github.com/donavon/storeit/wiki/Plugins).
 
 You can see a list of all Storeit plugins here
 [here](https://www.npmjs.com/browse/keyword/storeit-plugin).
@@ -31,4 +31,4 @@ You can see a list of all Storeit plugins here
 
 ## License
 
-For use under [MIT license](http://github.com/YuzuJS/storeit/raw/master/LICENSE).
+For use under [MIT license](http://github.com/donavon/storeit/raw/master/LICENSE).
