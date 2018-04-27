@@ -1,9 +1,9 @@
 {
-  "name": "storeit",
+  "name": "@yuzu/storeit",
   "version": "2.4.0",
   "description": "A key/value storage system that publishes events.",
   "main": "./lib/Storeit.js",
-  "homepage": "https://github.com/donavon/storeit",
+  "homepage": "https://github.com/YuzuJS/storeit",
   "author": {
     "name": "donavon"
   },
@@ -27,6 +27,12 @@
       "name": "Paul Bouzakis",
       "email": "coding@paulbouzakis.com",
       "url": "http://paulbouzakis.com"
+    }
+  ],
+  "maintainers": [
+    {
+      "name": "yuzu",
+      "email": "it-admin@bnedloudcloud.com"
     }
   ],
   "license": {
